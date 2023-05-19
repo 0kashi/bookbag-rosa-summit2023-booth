@@ -4,6 +4,7 @@ set -e
 # Assuming ROSA CLI, OC CLI, AWS CLI, are already installed. Also that OC is already logged in with the cluster-admin
 # This script sets up the project to enable the ostoy app to connect with s3.
 
+oc new-project ostoy-$GUID
 
 wget -q -P ${HOME} https://raw.githubusercontent.com/openshift-cs/rosaworkshop/master/rosa-workshop/ostoy/yaml/ostoy-microservice-deployment.yaml
 curl -s https://raw.githubusercontent.com/openshift-cs/rosaworkshop/master/rosa-workshop/ostoy/yaml/ostoy-frontend-deployment.yaml | sed 's/\# serviceAccount/serviceAccount/' > ${HOME}/ostoy-frontend-deployment.yaml
@@ -56,7 +57,6 @@ aws iam attach-role-policy --role-name "ostoy-sa-role" --policy-arn "${POLICY_AR
 
 APP_IAM_ROLE_ARN=$(aws iam get-role --role-name=ostoy-sa-role --query Role.Arn --output text)
 
-oc new-project ostoy-$GUID
 
 cat <<EOF | oc apply -f -
 apiVersion: v1
